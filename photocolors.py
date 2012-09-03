@@ -43,4 +43,4 @@ class PhotoColors(object):
         #     self.palette = self.palette[:3]
         # else:
         #     self.palette = self.palette[:4]
-        self.colors = [PhotoColors.rgb2hex(c[1]) for c in self.palette]
+        self.colors = [PhotoColors.rgb2hex(c[1]) for c in self.palette[:5]]

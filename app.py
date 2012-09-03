@@ -1,23 +1,9 @@
-from functools import wraps
-from flask import Flask, request, current_app, render_template, jsonify
+from flask import Flask, request, render_template, jsonify
 from werkzeug.exceptions import BadRequest
 import requests
 from photocolors import PhotoColors
 
 app = Flask(__name__)
-
-
-def handle_jsonp(f):
-    """Wraps JSONified output for JSONP"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        callback = request.args.get('callback', False)
-        if callback:
-            content = str(callback) + '(' + str(f().data) + ')'
-            return current_app.response_class(content, mimetype='application/javascript')
-        else:
-            return f(*args, **kwargs)
-    return decorated_function
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -33,11 +19,13 @@ def index():
         returns:
             jsonified data with 3 or 5 hex colors
     """
+    app.logger.info('Request received at /')
     if request.method == 'GET':
+        app.logger.debug('GET request')
         url = request.args.get('url', False)
         if not url:
             raise BadRequest('Missing url parameter.')
-        app.logger.info('URL: %s', url)
+        app.logger.info('Image URL: %s', url)
         r = requests.get(url)
         if r.status_code != 200:
             raise BadRequest('Invalid image URL: %s', url)

@@ -1,8 +1,32 @@
 import unittest
 import os
+import json
 from photocolors import PhotoColors
+import app
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+class TestAPI(unittest.TestCase):
+    TEST_URL = 'http://pcdn.500px.net/13076147/170238409a79c575c116c293fb687cbe482e9196/4.jpg'
+
+    def setUp(self):
+        app.app.config['TESTING'] = True
+        self.app = app.app.test_client()
+
+    def test_connect(self):
+        resp = self.app.get('/test')
+        self.assertEquals(resp.status_code, 200)
+
+    def test_GET(self):
+        resp = self.app.get('/?url=%s' % self.TEST_URL)
+        self.assertEquals(resp.status_code, 200)
+        json_data = json.loads(resp.data)
+        self.assertTrue('colors' in json_data)
+        self.assertTrue(json_data['colors'])
+
+    def test_POST(self):
+        pass
 
 
 class TestPhotoColors(unittest.TestCase):
