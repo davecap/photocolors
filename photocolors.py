@@ -8,6 +8,12 @@ from StringIO import StringIO
 
 class PhotoColors(object):
 
+    def __init__(self, data=None, path=None):
+        if data:
+            self.load_data(data)
+        elif path:
+            self.load_path(path)
+
     @staticmethod
     def rgb2hex(rgb):
         return format((rgb[0] << 16) | (rgb[1] << 8) | rgb[2], '06x')

@@ -1,39 +1,59 @@
+from functools import wraps
+from flask import Flask, request, current_app, render_template, jsonify
+from werkzeug.exceptions import BadRequest
 import requests
-from flask import *
-from werkzeug import secure_filename
 from photocolors import PhotoColors
 
 app = Flask(__name__)
 
 
+def handle_jsonp(f):
+    """Wraps JSONified output for JSONP"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        callback = request.args.get('callback', False)
+        if callback:
+            content = str(callback) + '(' + str(f().data) + ')'
+            return current_app.response_class(content, mimetype='application/javascript')
+        else:
+            return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/', methods=['GET', 'POST'])
-def colors():
+def index():
+    """
+        index accepts GET or POST at '/'
+
+        GET parameters:
+            url: the URL for an image
+        POST parameters:
+            image: an uploaded image file
+
+        returns:
+            jsonified data with 3 or 5 hex colors
+    """
     if request.method == 'GET':
-        # get URL from GET params
-        url = request.args.get('url')
-        if url is None:
-            return render_template('index.html')
+        url = request.args.get('url', False)
+        if not url:
+            raise BadRequest('Missing url parameter.')
         app.logger.info('URL: %s', url)
-        # download the url
         r = requests.get(url)
         if r.status_code != 200:
-            raise Exception('Invalid image URL: %s', url)
-        # process
-        p = PhotoColors()
-        p.load_data(r.content)
+            raise BadRequest('Invalid image URL: %s', url)
+        p = PhotoColors(data=r.content)
     else:
-        # handle file upload
+        # handles an image upload
         f = request.files['image']
-        fname = '/tmp/' + secure_filename(f.filename)
-        f.save(fname)
-        # process
-        p = PhotoColors()
-        p.load_path(fname)
-
+        p = PhotoColors(data=f.stream)
     # extract colors
     p.distill()
-    # render url & color palette
-    return render_template('colors.html', imgurl=url, colors=p.colors)
+    return jsonify({'colors': p.colors})
+
+
+@app.route('/test')
+def test():
+    return render_template('test.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
