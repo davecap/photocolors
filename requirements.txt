@@ -1,8 +1,8 @@
 Flask==0.9
 Jinja2==2.6
-#PIL==1.1.7
 #PIL from github has a fix for quantize() on Mac OS X
 -e git://github.com/hobsonlane/pil.git#egg=PIL
 Werkzeug==0.8.3
 wsgiref==0.1.2
 requests==0.14.0
+colormath==1.0.8

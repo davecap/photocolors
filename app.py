@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, jsonify
 from werkzeug.exceptions import BadRequest
 import requests
-from photocolors import PhotoColors
+import colorific
 
 app = Flask(__name__)
 
@@ -29,14 +29,14 @@ def index():
         r = requests.get(url)
         if r.status_code != 200:
             raise BadRequest('Invalid image URL: %s', url)
-        p = PhotoColors(data=r.content)
+        im = colorific.load_image(data=r.content)
     else:
         # handles an image upload
         f = request.files['image']
-        p = PhotoColors(data=f.stream)
+        im = colorific.load_image(data=f.stream)
     # extract colors
-    p.process()
-    return jsonify({'colors': p.colors})
+    colors = colorific.extract_colors(im)
+    return jsonify({'colors': colors})
 
 
 @app.route('/test')
