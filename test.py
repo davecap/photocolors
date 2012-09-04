@@ -50,17 +50,17 @@ class TestPhotoColors(unittest.TestCase):
         pc.load_path(self._imgpath('lenna.jpg'))
         self.assertTrue(pc.im)
 
-    def test_distill_single(self):
+    def test_process_single(self):
         pc = PhotoColors()
         pc.load_path(self._imgpath('lenna.jpg'))
-        pc.distill()
+        pc.process()
         self.assertTrue(pc.colors)
 
-    def test_distill_multiple(self):
+    def test_process_multiple(self):
         pc = PhotoColors()
         for p in self.TEST_PHOTOS:
             pc.load_path(self._imgpath(p))
-            pc.distill()
+            pc.process()
             self.assertTrue(pc.colors)
 
     def test_load_url(self):

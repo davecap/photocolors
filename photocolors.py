@@ -2,8 +2,12 @@
 # Generates color schemes from photos
 # Author: David Caplan <dcaplan@gmail.com>
 import os
-from PIL import Image
 from StringIO import StringIO
+
+try:
+    from PIL import Image
+except:
+    import Image
 
 
 class PhotoColors(object):
@@ -28,14 +32,29 @@ class PhotoColors(object):
             raise Exception('Invalid photo file path: %s', self.path)
         self.im = Image.open(self.path)
 
-    def distill(self):
+    def filter_palette(self):
+        def is_not_a_shade(c):
+            """returns true if rgb color is black/white/gray"""
+            rgb = c[1]
+            return not (abs(rgb[0] - rgb[1]) < 15
+                    and abs(rgb[1] - rgb[2]) < 15
+                    and abs(rgb[0] - rgb[2]) < 15)
+        return filter(is_not_a_shade, self.palette)
+
+    def process(self):
         """Convert the loaded image to a 3 or 5 color palette"""
-        # convert to a small 256 color 'P' palette image
-        p = self.im.convert("P", colors=256).resize((256, 1))
-        # convert back to RGB
+        # quantize to a smaller 256 color image
+        p = self.im.convert("P", palette=Image.ADAPTIVE, colors=256)
+        p.save('outbig.gif')
+        # resize to shrink the number of pixels to analyze
+        p = p.resize((64, 64))
+        p.save('outsmall.gif')
+        # convert back to RGB to get RGB data
         p = p.convert("RGB").getdata()
         # get all the colors
         self.palette = p.getcolors(p.size[0] * p.size[1])
+        # filter greys
+        self.palette = self.filter_palette()
         # sort by frequency
         self.palette = sorted(self.palette, key=lambda x: x[0], reverse=1)
         # if the first 3 colors are 75% of all colors... use top 3

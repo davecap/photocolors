@@ -35,12 +35,13 @@ def index():
         f = request.files['image']
         p = PhotoColors(data=f.stream)
     # extract colors
-    p.distill()
+    p.process()
     return jsonify({'colors': p.colors})
 
 
 @app.route('/test')
 def test():
+    """Interactive test view"""
     return render_template('test.html')
 
 if __name__ == "__main__":
