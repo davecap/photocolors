@@ -160,4 +160,5 @@ def extract_colors(im, min_saturation=MIN_SATURATION,
             * min_prominence][:max_colors]
 
     palette = Palette(colors, bg_color)
-    return [rgb_to_hex(c.value) for c in palette.colors]
+    # returns a palette of 3 if there are not 5 colors
+    return [rgb_to_hex(c.value) for c in palette.colors[:(5, 3)[len(palette.colors) < 5]]]

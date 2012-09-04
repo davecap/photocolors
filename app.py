@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, render_template, jsonify
 from werkzeug.exceptions import BadRequest
 import requests
@@ -39,10 +40,24 @@ def index():
     return jsonify({'colors': colors})
 
 
+@app.route('/url')
+def url():
+    """Interactive test view for any URL"""
+    return render_template('url.html')
+
+
 @app.route('/test')
 def test():
-    """Interactive test view"""
-    return render_template('test.html')
+    """Shows the test image palettes"""
+    from test import TestPhotoColors, BASE_DIR
+    images = []
+    for img in TestPhotoColors.TEST_PHOTOS:
+        path = os.path.join(BASE_DIR, 'static/photos/', img)
+        im = colorific.load_image(path=path)
+        colors = colorific.extract_colors(im)
+        images.append({'url': '/static/photos/%s' % img, 'colors': colors})
+    return render_template('test.html', images=images)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

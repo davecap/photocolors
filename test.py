@@ -33,11 +33,15 @@ class TestPhotoColors(unittest.TestCase):
     TEST_PHOTOS = [
         'tiger.jpg',
         'waterfall.jpeg',
-        'lenna.jpg'
+        'lenna.jpg',
+        'colors.png',
+        'flower.jpeg',
+        'grayscale.jpeg',
+        'mandms.jpeg'
     ]
 
     def setUp(self):
-        self.image_dir = os.path.join(BASE_DIR, 'photos')
+        self.image_dir = os.path.join(BASE_DIR, 'static/photos')
 
     def _imgpath(self, path):
         return os.path.join(self.image_dir, path)
@@ -50,9 +54,10 @@ class TestPhotoColors(unittest.TestCase):
         self.assertTrue(im)
 
     def test_extract_colors(self):
-        im = colorific.load_image(path=self._imgpath('lenna.jpg'))
-        colors = colorific.extract_colors(im)
-        self.assertTrue(colors)
+        for p in self.TEST_PHOTOS:
+            im = colorific.load_image(path=self._imgpath(p))
+            colors = colorific.extract_colors(im)
+            self.assertTrue(colors)
 
     def test_load_url(self):
         pass

@@ -5,4 +5,15 @@
     |_|   |_| |_|\___/ \__\___/ \____\___/|_|\___/|_|  |___/
                                                             
 
-## API to obtain a HEX color scheme from an image. 
+# API to obtain a HEX color scheme from an image.
+
+## Usage
+
+    import requests
+    import json
+
+    photocolors_url = 'http://127.0.0.1:5000/'
+    image_url = 'http://upload.wikimedia.org/wikipedia/en/2/24/Lenna.png'
+    res = requests.get(photocolors_url, data={url: image_url})
+
+    print json.loads(res.content)
