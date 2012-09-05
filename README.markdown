@@ -7,7 +7,25 @@
 
 # API to obtain a HEX color scheme from an image.
 
-## Python usage
+## Requirements
+
+* Flask
+* PIL
+* requests
+* colormath
+
+Uses *colorific* by 99Designs.
+
+## Usage
+    
+    git clone git://github.com/davecap/photocolors.git
+    cd photocolors
+    virtualenv venv
+    source venv/bin/activate
+    pip install -e requirements.txt
+    python app.py
+
+### Python
 
     import requests
     import json
@@ -18,7 +36,7 @@
 
     print json.loads(res.content)
 
-## JQuery usage
+### JQuery
 
     var url = 'http://upload.wikimedia.org/wikipedia/en/2/24/Lenna.png';
     var photocolors_url = 'http://127.0.0.1:5000/'
