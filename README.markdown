@@ -25,6 +25,8 @@ Uses *colorific* by 99Designs.
     pip install -e requirements.txt
     python app.py
 
+Go to [http://127.0.0.1:5000/test](http://127.0.0.1:5000/test) to see test results.
+
 ### Python
 
     import requests
